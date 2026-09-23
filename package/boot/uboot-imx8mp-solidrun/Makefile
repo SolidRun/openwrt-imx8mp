@@ -39,13 +39,8 @@ endef
 UBOOT_TARGETS := \
 	imx8mp_solidrun
 
-# The vendor defconfig leaves BINMAN off and expects flash.bin to be built
-# out of tree by imx-mkimage, as the Yocto BSP does. The in-tree binman
-# description for i.MX8MP is complete though, so enable it and let U-Boot
-# assemble flash.bin itself from bl31 and the LPDDR4 training blobs.
 UBOOT_CUSTOMIZE_CONFIG := \
-	--disable TOOLS_MKEFICAPSULE \
-	--enable BINMAN
+	--disable TOOLS_MKEFICAPSULE
 
 UBOOT_MAKE_FLAGS += \
 	BL31=$(STAGING_DIR_IMAGE)/$(ATF) \
