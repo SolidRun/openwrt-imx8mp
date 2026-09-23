@@ -109,6 +109,7 @@ define Device/generic
 	kmod-dwmac-rockchip kmod-dwmac-sun8i kmod-phy-aquantia kmod-phy-broadcom \
 	kmod-phy-marvell kmod-phy-marvell-10g kmod-sfp kmod-atlantic \
 	kmod-bcmgenet kmod-octeontx2-net kmod-renesas-net-avb \
+	kmod-phy-adin kmod-rtc-abx80x kmod-eeprom-at24 kmod-imx2-wdt \
 	kmod-phy-realtek kmod-phy-smsc $(if $(CONFIG_aarch64),kmod-thunderx-net)
 endef
 TARGET_DEVICES += generic

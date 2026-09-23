@@ -73,3 +73,37 @@ qemu-system-aarch64 -nographic \
 One can obtain other EFI/BIOS binaries from:
 - Distribution packages (such as qemu-efi-arm and qemu-efi-aarch64 in Debian)
 - Community builds, like retrage/edk2-nightly: https://retrage.github.io/edk2-nightly/
+
+
+SolidRun i.MX8M Plus SoM / HummingBoard Pro
+-------------------------------------------
+
+The board boots the generic armv8 EFI image with its stock SolidRun U-Boot;
+no OpenWrt-side bootloader is built or flashed.
+
+U-Boot supplies the devicetree. It is built with CONFIG_OF_LIST covering
+imx8mp-hummingboard-pro and runs "findfdt" before distro_bootcmd, so it
+selects the matching board DT and hands it to the EFI payload through the
+EFI configuration table. Nothing needs to be placed on the ESP for this.
+
+Write the combined image to a microSD card or to eMMC:
+
+gunzip -c bin/targets/armsr/armv8/openwrt-armsr-armv8-generic-ext4-combined-efi.img.gz \
+    | dd of=/dev/sdX bs=4M conv=fsync
+
+U-Boot's distro_bootcmd scans the GPT for the EFI system partition and runs
+efi/boot/bootaa64.efi (GRUB2), which loads the kernel from efi/openwrt. To
+boot manually from the U-Boot prompt:
+
+    run findfdt
+    load mmc 1:1 ${kernel_addr_r} efi/boot/bootaa64.efi
+    bootefi ${kernel_addr_r} ${fdtcontroladdr}
+
+Both Ethernet MACs are supported: eqos (kmod-dwmac-imx) and fec (kmod-fsl-fec),
+each behind an Analog Devices ADIN1300 PHY (kmod-phy-adin). The DT requests
+phy-mode "rgmii-id", so kmod-phy-adin is required for the internal delays --
+without it the links come up unreliably or not at all.
+
+The SoM's CYW43455 Wi-Fi/Bluetooth (Murata 1MW) is on SDIO and needs
+kmod-brcmfmac plus brcmfmac-firmware-43455-sdio, which are not part of the
+generic package set.
