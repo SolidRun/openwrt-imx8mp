@@ -347,6 +347,22 @@ endef
 $(eval $(call KernelPackage,phylib-qcom))
 
 
+define KernelPackage/phy-adin
+   SUBMENU:=$(NETWORK_DEVICES_MENU)
+   TITLE:=Analog Devices Industrial Ethernet PHY driver
+   KCONFIG:=CONFIG_ADIN_PHY
+   DEPENDS:=+kmod-libphy
+   FILES:=$(LINUX_DIR)/drivers/net/phy/adin.ko
+   AUTOLOAD:=$(call AutoProbe,adin,1)
+endef
+
+define KernelPackage/phy-adin/description
+   Currently supports the ADIN1200 and ADIN1300 PHYs.
+endef
+
+$(eval $(call KernelPackage,phy-adin))
+
+
 define KernelPackage/phy-amd
    SUBMENU:=$(NETWORK_DEVICES_MENU)
    TITLE:=AMD PHY driver
