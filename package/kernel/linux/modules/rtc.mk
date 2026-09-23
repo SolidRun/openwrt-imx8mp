@@ -7,6 +7,24 @@
 
 RTC_MENU:=RTC Real-Time Clock Support
 
+define KernelPackage/rtc-abx80x
+  SUBMENU:=$(RTC_MENU)
+  TITLE:=Abracon ABx80x RTC support
+  DEFAULT:=m if ALL_KMODS && RTC_SUPPORT
+  DEPENDS:=+kmod-i2c-core
+  KCONFIG:=CONFIG_RTC_DRV_ABX80X \
+	CONFIG_RTC_CLASS=y
+  FILES:=$(LINUX_DIR)/drivers/rtc/rtc-abx80x.ko
+  AUTOLOAD:=$(call AutoProbe,rtc-abx80x)
+endef
+
+define KernelPackage/rtc-abx80x/description
+ Kernel module for Abracon AB080X and AB180X families of I2C RTCs.
+endef
+
+$(eval $(call KernelPackage,rtc-abx80x))
+
+
 define KernelPackage/rtc-bq32k
   SUBMENU:=$(RTC_MENU)
   TITLE:=Texas Instruments BQ32000 RTC support
