@@ -131,9 +131,11 @@ endef
 TARGET_DEVICES += kontron_osm-s-imx8mp
 
 
-# U-Boot comes from the vendor tree (see package/boot/uboot-imx8mp-solidrun),
-# since mainline has no support for this SoM. flash.bin is written at 32KiB
-# and the first partition starts at 8MiB, matching SolidRun's own layout.
+# No bootloader is written here. Mainline U-Boot has no support for this SoM,
+# and the vendor tree cannot assemble flash.bin on its own -- that needs NXP's
+# imx-mkimage, which is not packaged yet (see package/boot/uboot-imx8mp-solidrun).
+# The board's own imx-boot at 32KiB is left untouched: the image starts its
+# first partition at 8MiB, matching the layout SolidRun's own images use.
 define Device/solidrun_imx8mp-hummingboard-pro
   $(call Device/Default)
   FILESYSTEMS := squashfs ext4
@@ -149,8 +151,7 @@ define Device/solidrun_imx8mp-hummingboard-pro
 	kmod-eeprom-at24 \
 	kmod-rtc-abx80x \
 	kmod-gpio-button-hotplug kmod-leds-gpio
-  UBOOT := imx8mp_solidrun
   IMAGES := img.gz
-  IMAGE/img.gz := boot-scr | boot-img-ext4 | sdcard-img-ext4 | sdcard-img-add-uboot | gzip | append-metadata
+  IMAGE/img.gz := boot-scr | boot-img-ext4 | sdcard-img-ext4 | gzip | append-metadata
 endef
 TARGET_DEVICES += solidrun_imx8mp-hummingboard-pro

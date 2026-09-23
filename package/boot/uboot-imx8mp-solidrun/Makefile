@@ -22,18 +22,21 @@ PKG_MIRROR_HASH:=skip
 include $(INCLUDE_DIR)/u-boot.mk
 include $(INCLUDE_DIR)/package.mk
 
+# This builds U-Boot proper and the SPL, but not a bootable flash.bin.
+# Assembling that needs spl/u-boot-spl-ddr.bin, which nothing in the vendor
+# tree produces: NXP builds it out of tree with imx-mkimage, which is not
+# packaged here yet. Until it is, the pieces imx-mkimage consumes are staged
+# and the board keeps booting the imx-boot already in its eMMC/SPI, so the
+# package is not selected by the device.
 define U-Boot/Default
   BUILD_TARGET:=imx
   BUILD_SUBTARGET:=cortexa53
-  UBOOT_IMAGE:=flash.bin
   DEPENDS:=+firmware-imx +trusted-firmware-a-imx8mp
   ATF:=bl31_imx8mp.bin
 endef
 
 define U-Boot/imx8mp_solidrun
   NAME:=SolidRun i.MX8M Plus SoM
-  BUILD_DEVICES:= \
-	solidrun_imx8mp-hummingboard-pro
 endef
 
 UBOOT_TARGETS := \
@@ -48,9 +51,10 @@ UBOOT_MAKE_FLAGS += \
 
 define Build/InstallDev
 	$(INSTALL_DIR) $(STAGING_DIR_IMAGE)
-	$(foreach img,$(UBOOT_IMAGE), \
-		$(CP) $(PKG_BUILD_DIR)/$(img) $(STAGING_DIR_IMAGE)/$(BUILD_VARIANT)-$(img); \
-	)
+	$(CP) $(PKG_BUILD_DIR)/u-boot.bin \
+		$(STAGING_DIR_IMAGE)/$(BUILD_VARIANT)-u-boot.bin
+	$(CP) $(PKG_BUILD_DIR)/spl/u-boot-spl.bin \
+		$(STAGING_DIR_IMAGE)/$(BUILD_VARIANT)-u-boot-spl.bin
 endef
 
 define Package/u-boot/install/default
