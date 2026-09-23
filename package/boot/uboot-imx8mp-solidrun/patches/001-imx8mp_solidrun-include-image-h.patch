@@ -1,0 +1,22 @@
+From: Yazan Shhady <yazan.shhady@solid-run.com>
+Subject: [PATCH] board: imx8mp_solidrun: include image.h for fit_image_get_data
+
+preload_fdt.c calls fit_image_get_data() without declaring it. GCC 14
+rejects implicit function declarations outright, so the build fails:
+
+  preload_fdt.c:54:23: error: implicit declaration of function
+  'fit_image_get_data' [-Wimplicit-function-declaration]
+
+Older compilers only warned, which is why this goes unnoticed in the
+vendor BSP. Include <image.h>, where the function is declared.
+
+--- a/board/solidrun/imx8mp_solidrun/preload_fdt.c
++++ b/board/solidrun/imx8mp_solidrun/preload_fdt.c
+@@ -6,6 +6,7 @@
+ #include <binman.h>
+ #include <dm/ofnode.h>
+ #include <env.h>
++#include <image.h>
+ #include <linux/libfdt.h>
+
+ #define OS_DTBS_STAGE_ADDR	RAMDISK_ADDR_R	/* imx-mkimage loads fit image here */
