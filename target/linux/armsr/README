@@ -93,10 +93,11 @@ gunzip -c bin/targets/armsr/armv8/openwrt-armsr-armv8-generic-ext4-combined-efi.
 
 U-Boot's distro_bootcmd scans the GPT for the EFI system partition and runs
 efi/boot/bootaa64.efi (GRUB2), which loads the kernel from efi/openwrt. To
-boot manually from the U-Boot prompt:
+boot manually from the U-Boot prompt, substituting the device and partition
+numbers that "mmc list" and "part list" report for the medium in use:
 
     run findfdt
-    load mmc 1:1 ${kernel_addr_r} efi/boot/bootaa64.efi
+    load mmc ${devnum}:1 ${kernel_addr_r} efi/boot/bootaa64.efi
     bootefi ${kernel_addr_r} ${fdtcontroladdr}
 
 Both Ethernet MACs are supported: eqos (kmod-dwmac-imx) and fec (kmod-fsl-fec),
